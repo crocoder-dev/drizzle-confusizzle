@@ -5,8 +5,11 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsx ."
+    "generate": "drizzle-kit generate:sqlite",
+    "seed": "npm run with-env tsx seed.ts",
+    "push": "npm run with-env drizzle-kit push:sqlite",
+    "start": "npm run wtih-env tsx .",
+    "with-env": "dotenv -e ./.env --"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +19,8 @@
     "drizzle-orm": "^0.29.3"
   },
   "devDependencies": {
-    "tsx": "^4.7.0",
-    "drizzle-kit": "^0.20.14"
+    "dotenv-cli": "^7.3.0",
+    "drizzle-kit": "^0.20.14",
+    "tsx": "^4.7.0"
   }
 }

@@ -7,7 +7,6 @@ import { forgeUsers } from "../forge-users";
 import { dates } from "../dates";
 import { mergeRequests } from "../merge-requests";
 import { repositories } from "../repositories";
-import { nullRows } from "../null-rows";
 
 const nullForgeUser = {
   id: 1,
@@ -41,23 +40,11 @@ const nullRepository = {
 } satisfies NewRepository;
 
 export async function seed(db: LibSQLDatabase, startDate: Date, endDate: Date) {
-  const insertedNullForgeUser = await db.insert(forgeUsers).values(nullForgeUser).onConflictDoNothing().returning().get();
-  const insertedNullDate = await db.insert(dates).values(nullDate).onConflictDoNothing().returning().get();
-  const insertedNullMergeRequest = await db.insert(mergeRequests).values(nullMergeRequest).onConflictDoNothing().returning().get();
-  const insertedNullRepo = await db.insert(repositories).values(nullRepository).onConflictDoNothing().returning().get();
+  await db.insert(forgeUsers).values(nullForgeUser).onConflictDoNothing().returning().get();
+  await db.insert(dates).values(nullDate).onConflictDoNothing().returning().get();
+  await db.insert(mergeRequests).values(nullMergeRequest).onConflictDoNothing().returning().get();
+  await db.insert(repositories).values(nullRepository).onConflictDoNothing().returning().get();
   await db.insert(dates).values(generateDates(startDate, endDate)).onConflictDoNothing().run();
-  
-  // TODO: ???
-  if (!insertedNullForgeUser || !insertedNullDate || !insertedNullMergeRequest || !insertedNullRepo) return undefined;
-
-  const insertedNullRows = await db.insert(nullRows).values({
-    userId: insertedNullForgeUser.id,
-    dateId: insertedNullDate.id,
-    mergeRequestId: insertedNullMergeRequest.id,
-    repositoryId: insertedNullRepo.id,
-  }).onConflictDoNothing().returning().get();
-
-  return insertedNullRows;
 }
 
 export function getFirstDay(year: number): Date {
@@ -92,8 +79,8 @@ export function checkWeek(week: number, year: number): { newWeek: string } {
   return { newWeek: `${isoYear}-W${isoWeek.toString().padStart(2, '0')}` };
 }
 
-export function getDateInfo(date: Date): {day: number, week: string, month: number, year: number} {
- 
+export function getDateInfo(date: Date): { day: number, week: string, month: number, year: number } {
+
   const firstDay = getFirstDay(date.getUTCFullYear());
   const week = Math.ceil(((date.getTime() - firstDay.getTime()) / (24 * 60 * 60 * 1000) + 1) / 7);
   const { newWeek } = checkWeek(week, date.getUTCFullYear());
@@ -102,11 +89,11 @@ export function getDateInfo(date: Date): {day: number, week: string, month: numb
     week: newWeek,
     month: date.getUTCMonth() + 1, // Months are zero-based, so we add 1.
     year: date.getUTCFullYear(),
- }
+  }
 }
 
 function generateDates(startDate: Date, endDate: Date) {
-  const dates = [];
+  const dates: { day: number, week: string, month: number, year: number }[] = [];
   const currentDate = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getDate()));
 
   while (currentDate <= endDate) {
