@@ -36,7 +36,7 @@ const exampleMergeRequestEvent = {
 } satisfies NewMergeRequestEvent
 
 await db.transaction(async tx => {
-  await deleteMergeRequestEvents(tx, exampleMergeRequestEvent.mergeRequest);
+  await deleteMergeRequestEvents(tx, exampleMergeRequestEvent.mergeRequest).run();
   await insertMergeRequestEvents(tx, new Array(56).fill(exampleMergeRequestEvent)).run();
   
   // The following line throws an error:
