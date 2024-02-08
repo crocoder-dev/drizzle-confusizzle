@@ -10,5 +10,3 @@ function insertMergeRequestEvents(
   return tx.insert(mergeRequestEvents)
     .values(mre);
 }
-
-

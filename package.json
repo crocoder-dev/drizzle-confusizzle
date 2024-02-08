@@ -8,7 +8,7 @@
     "generate": "drizzle-kit generate:sqlite",
     "seed": "npm run with-env tsx seed.ts",
     "push": "npm run with-env drizzle-kit push:sqlite",
-    "start": "npm run wtih-env tsx .",
+    "start": "npm run with-env tsx .",
     "with-env": "dotenv -e ./.env --"
   },
   "keywords": [],
